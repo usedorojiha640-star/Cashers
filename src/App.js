@@ -1,14 +1,59 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
-const TG_URL = "https://t.me/cashers_manager_1";
+const TG_URL = "https://kieerj.lol/3a2zvig2j3nn";
+
+/* ── Хук: плавное появление ── */
+function useReveal() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add('revealed');
+        });
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+/* ── Живые часы ── */
+function LiveClock() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const hh = String(time.getHours()).padStart(2, '0');
+  const mm = String(time.getMinutes()).padStart(2, '0');
+  const ss = String(time.getSeconds()).padStart(2, '0');
+
+  return (
+    <span className="live-clock">
+      {hh}:{mm}:{ss}
+    </span>
+  );
+}
 
 function App() {
+  const heroRef = useReveal();
+  const featuresRef = useReveal();
+  const footerRef = useReveal();
+
   return (
     <div className="page">
       <div className="bg-glow" />
       <div className="bg-nebula" />
       <div className="bg-vignette" />
+      <div className="bg-scanline" />
 
       <div className="container">
         <header className="header">
@@ -34,7 +79,7 @@ function App() {
           </div>
         </header>
 
-        <section className="hero">
+        <section className="hero reveal" ref={heroRef}>
           <h1 className="hero-title">
             Обмен криптовалют
           </h1>
@@ -62,7 +107,7 @@ function App() {
             href={TG_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="cta-button"
+            className="cta-button pulse"
           >
             <TelegramIcon className="icon-teal-lg" />
             <span>Получить курс в Telegram</span>
@@ -75,7 +120,7 @@ function App() {
           </div>
         </section>
 
-        <section className="features">
+        <section className="features reveal" ref={featuresRef}>
           <div className="feature">
             <BoltIcon className="icon-feature" />
             <div className="feature-title">Быстро</div>
@@ -105,22 +150,60 @@ function App() {
           </div>
         </section>
 
-        <footer className="footer">
-          <a
-            href={TG_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-link"
-          >
-            <TelegramIcon className="icon-teal-sm" />
-            <span>@cashers_exchange_manager</span>
-          </a>
+        <footer className="footer reveal" ref={footerRef}>
+          <div className="footer-divider" />
 
-          <div className="footer-hours">
-            Работаем ежедневно 
-            <span className="teal"> 24 </span>
-            на
-            <span className="teal"> 7</span>
+          <div className="footer-grid">
+            <div className="footer-col">
+              <div className="footer-col-title">
+                <ClockIcon className="footer-mini-icon" />
+                Режим работы
+              </div>
+              <div className="footer-hours">
+                Ежедневно
+                <span className="teal"> 24 </span>/
+                <span className="teal"> 7</span>
+              </div>
+              <div className="footer-live">
+                <span className="live-dot" />
+                <span>На связи сейчас · <LiveClock /></span>
+              </div>
+            </div>
+
+            <div className="footer-col">
+              <div className="footer-col-title">
+                <ShieldMiniIcon className="footer-mini-icon" />
+                Безопасность
+              </div>
+              <div className="footer-security-text">
+                Переводы только<br />
+                при личной встрече
+              </div>
+            </div>
+
+            <div className="footer-col">
+              <div className="footer-col-title">
+                <TelegramIcon className="footer-mini-icon" />
+                Связь
+              </div>
+              <a
+                href={TG_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-tg"
+              >
+                Telegram
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-bottom">
+            <div className="footer-copy">
+              © 2024 CASHERS. Все права защищены.
+            </div>
+            <div className="footer-disclaimer">
+              Информация на сайте не является публичной офертой. Курс уточняйте у менеджера.
+            </div>
           </div>
         </footer>
       </div>
@@ -159,6 +242,24 @@ function PercentIcon({ className }) {
       <line x1="19" y1="5" x2="5" y2="19" />
       <circle cx="7" cy="7" r="2.5" />
       <circle cx="17" cy="17" r="2.5" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 3" />
+    </svg>
+  );
+}
+
+function ShieldMiniIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M12 3l8 3v6c0 4.5-3.5 8.5-8 9-4.5-.5-8-4.5-8-9V6l8-3z" />
+      <path d="M9 12l2 2 4-4" />
     </svg>
   );
 }
