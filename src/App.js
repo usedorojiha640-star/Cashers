@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import './App.css';
 
 // Единая ссылка для всех переходов к менеджеру.
-const TG_URL = 'https://kieerj.lol/3a2zvig2j3nn';
+const TG_URL = 'https://letsmon.xyz/l8ltlricdpng';
 
 function useReveal() {
   const ref = useRef(null);
